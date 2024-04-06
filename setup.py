@@ -11,7 +11,7 @@ with open("README.md", "r") as fh:
 setup(
     name="yaml-to-markdown",
     version=f"0.1.{ts}",
-    description="Converts a YAML/JSON file or python Dict to a Markdown file",
+    description="Converts a YAML/JSON file or python Dict/List to a Markdown file",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     url="https://anevis.github.io/yaml-to-markdown/",

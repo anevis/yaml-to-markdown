@@ -12,7 +12,7 @@ class MDConverter:
         """
         self._sections: Optional[List[str]] = None
         self._custom_processors: Optional[
-            Dict[str, Callable[[MDConverter, str, Any, int], str]]
+            Dict[str, Callable[[MDConverter, Optional[str], Any, int], str]]
         ] = None
 
     def set_selected_sections(self, sections: List[str]) -> None:
@@ -27,13 +27,15 @@ class MDConverter:
 
     def set_custom_section_processors(
         self,
-        custom_processors: Dict[str, Callable[[MDConverter, str, Any, int], str]],
+        custom_processors: Dict[
+            str, Callable[[MDConverter, Optional[str], Any, int], str]
+        ],
     ):
         """
         Set custom section processors, the key must match a section name/key
         and the processor must take 4 arguments and return a Markdown string:
             converter (MDConverter): The current converter object.
-            section (str): The section key
+            section ([str]): The section key
             data (Union[List[Any], Dict[str, Any], str]): The data for the section
             level (int): The section level
 
@@ -44,30 +46,49 @@ class MDConverter:
 
     def convert(
         self,
-        data: Dict[str, Union[List[Any], Dict[str, Any], str]],
+        data: Union[Dict[str, Union[List[Any], Dict[str, Any], str]], List[Any]],
         output_writer: IO[str],
     ) -> None:
         """
         Convert the given JSON object into Markdown.
 
         Args:
-            data (Dict[str, Union[List[Any], Dict[str, Any], str]]):
+            data (Union[Dict[str, Union[List[Any], Dict[str, Any], str]], List[Any]]):
+                The JSON object to convert, either a dictionary or a list.
             output_writer (IO[str]):
                 The output stream object to write the Markdown to.
         """
+        if isinstance(data, dict):
+            self._process_dict(data, output_writer)
+        elif isinstance(data, list):
+            self._process_dict({None: data}, output_writer)
+
+    def _process_dict(
+        self,
+        data: Dict[Optional[str], Any],
+        output_writer: IO[str],
+    ) -> None:
         for section in self._sections if self._sections is not None else data.keys():
             if section in data:
                 output_writer.write(self.process_section(section, data.get(section)))
 
     def process_section(
-        self, section: str, data: Union[List[Any], Dict[str, Any], str], level: int = 2
+        self,
+        section: Optional[str],
+        data: Union[List[Any], Dict[str, Any], str],
+        level: int = 2,
     ) -> str:
+        section_title = (
+            f" {convert_to_title_case(section)}" if section is not None else ""
+        )
         if self._custom_processors and section in self._custom_processors:
             section_str = self._custom_processors[section](self, section, data, level)
         elif isinstance(data, list):
-            section_str = f"{'#' * level} {convert_to_title_case(section)}\n{self._process_list(data=data)}"
+            section_str = (
+                f"{'#' * level}{section_title}\n{self._process_list(data=data)}"
+            )
         elif isinstance(data, dict):
-            section_str = f"{'#' * level} {convert_to_title_case(section)}\n"
+            section_str = f"{'#' * level}{section_title}\n"
             for section in data.keys():
                 section_str += self.process_section(
                     section, data.get(section), level=level + 1

@@ -21,6 +21,23 @@ _LIST_ITEMS = ["data1", "data2"]
 
 
 class TestMDConverter:
+    def test_process_list(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        data = [{"section1": "data1"}]
+
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """##
+| Section1 |
+| --- |
+| data1 |
+"""
+        )
+
     def test_process_section_with_str(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()

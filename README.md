@@ -1,6 +1,6 @@
 # YAML to Markdown Converter
 
-A Python utility to take a JSON / YAML file or a python dict and create a Markdown file.
+A Python utility to take a JSON / YAML file or a python dict / list and create a Markdown file.
 
 ## Usage
 
