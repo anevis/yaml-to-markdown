@@ -47,6 +47,9 @@ python json_to_markdown/convert.py --output-file output.md --json-file test.json
 python json_to_markdown/convert.py --output-file output.md --yaml-file test.yaml
 ```
 
+## Developer Guide
+Please see the [DEVELOPER.md](docs/DEVELOPER.md) file for more information on how to contribute to this project.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
