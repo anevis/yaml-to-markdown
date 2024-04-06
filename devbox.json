@@ -1,0 +1,32 @@
+{
+  "$schema":  "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
+  "packages": ["python@3.12.2"],
+  "shell": {
+    "env": {
+      "VENV_DIR": "$HOME/MyFiles/programming/OpenSource/json-to-markdown/.devbox/virtenv/python/.venv"
+    },
+    "init_hook": [
+      ". $VENV_DIR/bin/activate"
+    ],
+    "scripts": {
+      "install": [
+        "pip install -r requirements.txt"
+      ],
+      "install-dev": [
+        "pip install -r requirements.txt -r requirements-dev.txt"
+      ],
+      "test": [
+        "pytest src/"
+      ],
+      "lint": [
+        "flake8 src/"
+      ],
+      "format-check": [
+        "black --check src/"
+      ],
+      "format": [
+        "black src/"
+      ]
+    }
+  }
+}
