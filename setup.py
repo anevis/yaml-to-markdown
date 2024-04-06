@@ -9,11 +9,11 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="json-to-markdown",
+    name="yaml-to-markdown",
     version=f"0.1.{ts}",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    url="https://anevis.github.io/json-to-markdown/",
+    url="https://anevis.github.io/yaml-to-markdown/",
     license="MIT",
     author="anevis",
     install_requires=[
@@ -23,7 +23,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "json-to-markdown=json_to_markdown.convert:main",
+            "yaml-to-markdown=yaml_to_markdown.convert:main",
         ],
     },
     long_description=long_description,

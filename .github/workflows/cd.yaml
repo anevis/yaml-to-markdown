@@ -27,4 +27,7 @@ jobs:
         run: devbox run build
       - name: 🚀 Publish to PyPI
         run: devbox run publish
+        env:
+          TWINE_USERNAME: "__token__"
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
       - run: echo "🍏 This job's status is ${{ job.status }}."

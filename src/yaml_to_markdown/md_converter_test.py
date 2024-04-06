@@ -5,7 +5,7 @@ from typing import Dict, Any
 import pytest
 from mock import mock
 
-from json_to_markdown.md_converter import MDConverter
+from yaml_to_markdown.md_converter import MDConverter
 
 _TABLE_ITEMS = [
     {

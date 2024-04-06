@@ -5,7 +5,7 @@ from typing import Dict, Any, Optional
 import click
 import yaml
 
-from json_to_markdown.md_converter import MDConverter
+from yaml_to_markdown.md_converter import MDConverter
 
 
 def _get_json_data(json_file: str) -> Dict[str, Any]:
@@ -21,7 +21,7 @@ def _get_yaml_data(yaml_file: str) -> Dict[str, Any]:
 def _help() -> None:
     click.echo("Convert JSON or YAML to Markdown.")
     click.echo(
-        "Usage: json-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>]"
+        "Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>]"
     )
     click.echo(
         "    -o, --output-file <output_file>: Path to the output file as a string [Mandatory]."
@@ -36,7 +36,7 @@ def _help() -> None:
     click.echo(
         "Note: Either yaml_file or json_file is required along with output_file."
     )
-    click.echo("Example: json-to-markdown -o output.md -y data.yaml")
+    click.echo("Example: yaml-to-markdown -o output.md -y data.yaml")
 
 
 @click.command()

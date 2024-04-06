@@ -47,10 +47,10 @@ devbox run install-dev
 
 The functionality can be used in the command line or in Python code.
 
-To use the functionality in Python code, you can import the `MDConverter` class from the `json_to_markdown.md_converter` module.
+To use the functionality in Python code, you can import the `MDConverter` class from the `yaml_to_markdown.md_converter` module.
 The `md_converter.py` file contains the `MDConverter` class, which is used by the `convert` function to perform the conversion.
 
-To use the functionality from the command line, you can run the `convert.py` script in the `json_to_markdown` directory.
+To use the functionality from the command line, you can run the `convert.py` script in the `yaml_to_markdown` directory.
 This file contains the `convert` function, which takes a JSON or YAML file and converts it to Markdown.
 
 ## Testing

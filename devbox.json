@@ -1,10 +1,11 @@
 {
   "$schema":  "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
   "packages": ["python@3.12.2"],
+  "env": {
+    "VENV_DIR": "$HOME/MyFiles/programming/OpenSource/yaml-to-markdown/.devbox/virtenv/python/.venv",
+    "TWINE_USERNAME": "__token__"
+  },
   "shell": {
-    "env": {
-      "VENV_DIR": "$HOME/MyFiles/programming/OpenSource/json-to-markdown/.devbox/virtenv/python/.venv"
-    },
     "init_hook": [
       ". $VENV_DIR/bin/activate"
     ],

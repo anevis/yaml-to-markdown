@@ -3,7 +3,7 @@ from unittest.mock import mock_open, patch, Mock
 
 import pytest
 
-from json_to_markdown.convert import convert
+from yaml_to_markdown.convert import convert
 
 _JSON_DATA = '{"key": "value"}'
 

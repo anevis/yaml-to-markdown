@@ -1,4 +1,4 @@
-from json_to_markdown.utils import convert_to_title_case
+from yaml_to_markdown.utils import convert_to_title_case
 
 
 class TestUtils:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, IO, List, Optional, Union, Callable
 
-from json_to_markdown.utils import convert_to_title_case
+from yaml_to_markdown.utils import convert_to_title_case
 
 
 class MDConverter:
