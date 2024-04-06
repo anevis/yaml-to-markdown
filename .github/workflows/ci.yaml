@@ -1,5 +1,5 @@
-name: CI/CD Pipeline
-run-name: CI/CD 🚀
+name: CI Pipeline
+run-name: CI 🚀
 on: [push]
 jobs:
   CI:
@@ -18,4 +18,6 @@ jobs:
         run: devbox run install-dev
       - name: 🧹 Linting & Formatting
         run: devbox run lint && devbox run format
+      - name: 🧪 Running Tests
+        run: devbox run test
       - run: echo "🍏 This job's status is ${{ job.status }}."
