@@ -2,7 +2,25 @@
 
 A Python utility to take a JSON / YAML file or a python dict / list and create a Markdown file.
 
+## Installation
+
+```bash
+pip install yaml-to-markdown
+```
+
 ## Usage
+
+```bash
+$ yaml-to-markdown --help
+Convert JSON or YAML to Markdown.
+Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>]
+    -o, --output-file <output_file>: Path to the output file as a string [Mandatory].
+    -y, --yaml-file <yaml_file>: Path to the YAML file as a string [Optional]
+    -j, --json-file <json_file>: Path to the JSON file as a string [Optional]
+    -h, --help: Show this message and exit.
+Note: Either yaml_file or json_file is required along with output_file.
+Example: yaml-to-markdown -o output.md -y data.yaml
+```
 
 ### In Python Code example:
 

@@ -15,7 +15,7 @@ jobs:
       - name: Installing Devbox ⚙️
         uses: jetpack-io/devbox-install-action@v0.8.0
       - name: Install all dependencies 📦
-        run: devbox run install-dev
+        run: devbox run install
       - name: 🧹 Linting & Formatting
         run: devbox run lint && devbox run format
       - name: 🧪 Running Tests

@@ -2,7 +2,7 @@ name: CD Pipeline
 run-name: CD 📦🚀
 
 on:
-  workflow_run:
+  workflow_dispatch:
     workflows: ['CI Pipeline']
     types: [completed]
     branches:
@@ -22,7 +22,7 @@ jobs:
       - name: Installing Devbox ⚙️
         uses: jetpack-io/devbox-install-action@v0.8.0
       - name: Install all dependencies 📦
-        run: devbox run install-dev
+        run: devbox run install
       - name: 📦 Package
         run: devbox run build
       - name: 🚀 Publish to PyPI
