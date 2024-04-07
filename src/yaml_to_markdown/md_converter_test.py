@@ -38,6 +38,25 @@ class TestMDConverter:
 """
         )
 
+    def test_process_list_of_list(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        data = [["list1 data1", "list1 data2"], ["list2 data1", "list2 data2"]]
+
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """##
+* list1 data1
+* list1 data2
+* list2 data1
+* list2 data2
+
+"""
+        )
+
     def test_process_section_with_str(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
