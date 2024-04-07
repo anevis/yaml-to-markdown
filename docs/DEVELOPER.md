@@ -35,12 +35,12 @@ devbox shell
 
 From within devbox shell
 ```bash
-pip install -r requirements.txt -r requirements-dev.txt
+pip install -r requirements.txt
 ```
 
 From outside devbox shell
 ```bash
-devbox run install-dev
+devbox run install
 ```
 
 ## Code Structure

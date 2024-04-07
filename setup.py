@@ -1,3 +1,5 @@
+from typing import List
+
 from setuptools import setup, find_packages
 import calendar
 import time
@@ -8,6 +10,21 @@ ts = calendar.timegm(gmt)
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+long_description = long_description.replace(
+    "](", "](https://anevis.github.io/yaml-to-markdown/"
+)
+
+with open("requirements.txt", "r") as req_file:
+    raw_requirements = req_file.readlines()
+
+requirements: List[str] = []
+for req in raw_requirements:
+    if req.strip() == "# Dev dependencies":
+        break
+    if req.startswith("#") or req.strip() == "":
+        continue
+    requirements.append(req.strip())
+
 setup(
     name="yaml-to-markdown",
     version=f"0.1.{ts}",
@@ -17,11 +34,7 @@ setup(
     url="https://anevis.github.io/yaml-to-markdown/",
     license="MIT",
     author="anevis",
-    install_requires=[
-        "click==8.1.7",
-        "jsonschema[format]==4.21.1",
-        "pyyaml==6.0.1",
-    ],
+    install_requires=requirements,
     entry_points={
         "console_scripts": [
             "yaml-to-markdown=yaml_to_markdown.convert:main",

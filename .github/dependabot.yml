@@ -12,6 +12,8 @@ updates:
     commit-message:
       prefix: "[dependabot] "
     assignees:
-      - "anevis:
+      - "anevis"
     labels:
       - "dependabot"
+    reviewers:
+      - "anevis"

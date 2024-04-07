@@ -2,7 +2,7 @@ name: CD Pipeline
 run-name: CD 📦🚀
 
 on:
-  workflow_run:
+  workflow_dispatch:
     workflows: ['CI Pipeline']
     types: [completed]
     branches:
