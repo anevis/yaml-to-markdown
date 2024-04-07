@@ -22,7 +22,7 @@ jobs:
       - name: Installing Devbox ⚙️
         uses: jetpack-io/devbox-install-action@v0.8.0
       - name: Install all dependencies 📦
-        run: devbox run install-dev
+        run: devbox run install
       - name: 📦 Package
         run: devbox run build
       - name: 🚀 Publish to PyPI
