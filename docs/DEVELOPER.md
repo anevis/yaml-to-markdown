@@ -70,6 +70,10 @@ From outside devbox shell
 ```bash
 devbox run test
 ```
+With Coverage, the coverage report will be generated in the `coverage.xml` file.
+```bash
+devbox run test-cov
+```
 
 ## Linting & Formatting
 
