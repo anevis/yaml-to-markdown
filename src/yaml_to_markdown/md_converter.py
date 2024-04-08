@@ -30,7 +30,7 @@ class MDConverter:
         custom_processors: Dict[
             str, Callable[[MDConverter, Optional[str], Any, int], str]
         ],
-    ):
+    ) -> None:
         """
         Set custom section processors, the key must match a section name/key
         and the processor must take 4 arguments and return a Markdown string:

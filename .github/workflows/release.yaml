@@ -1,19 +1,13 @@
-name: CD Pipeline
-run-name: CD 📦🚀
+name: Release Pipeline
+run-name: Release 📦🚀
 
 on:
-  workflow_run:
-    workflows: ["CI Pipeline"]
-    types: [completed]
+  workflow_dispatch:
     branches:
       - "main"
-    paths:
-      - "src/**"
-      - "requirements.txt"
-      - "LICENSE"
 
 jobs:
-  CD:
+  Release:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -27,7 +21,32 @@ jobs:
         uses: jetpack-io/devbox-install-action@v0.8.0
       - name: Install all dependencies 📦
         run: devbox run install
+      - name: Release Version 🏷
+        run: echo "RELEASE_VERSION=0.1.$(date +%s)" >> "$GITHUB_ENV"
+      - name: Create Tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/v${{ env.RELEASE_VERSION }}',
+              sha: context.sha
+            })
+      - name: Create Release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: 'v${{ env.RELEASE_VERSION }}',
+              name: 'Release v${{ env.RELEASE_VERSION }}',
+              generate_release_notes: true
+            })
       - name: 📦 Package
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: devbox run build
       - name: 🚀 Publish to PyPI
         run: devbox run publish

@@ -1,11 +1,9 @@
+import os
 from typing import List
 
 from setuptools import setup, find_packages
-import calendar
-import time
 
-gmt = time.gmtime()
-ts = calendar.timegm(gmt)
+version = os.environ.get("RELEASE_VERSION")
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -27,7 +25,7 @@ for req in raw_requirements:
 
 setup(
     name="yaml-to-markdown",
-    version=f"0.1.{ts}",
+    version=version,
     description="Converts a YAML/JSON file or python Dict/List to a Markdown file",
     packages=find_packages(where="src"),
     package_dir={"": "src"},

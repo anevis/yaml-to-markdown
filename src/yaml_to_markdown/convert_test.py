@@ -11,9 +11,7 @@ _OUTPUT_FILE_NAME = "output.md"
 
 def test_convert_with_no_file() -> None:
     # Execute
-    with pytest.raises(
-        RuntimeError, match="One of yaml_file or json_file is required."
-    ):
+    with pytest.raises(SystemExit):
         convert(output_file="some.md")
 
 

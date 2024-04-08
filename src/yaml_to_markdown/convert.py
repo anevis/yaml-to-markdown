@@ -50,21 +50,26 @@ def main(
     json_file: Optional[str],
     show_help: bool,
 ) -> None:
-    if show_help or (yaml_file is None and json_file is None) or output_file is None:
+    if show_help:
         _help()
         return
+    _verify_inputs(output_file=output_file, yaml_file=yaml_file, json_file=json_file)
 
     convert(output_file=output_file, yaml_file=yaml_file, json_file=json_file)
+
+
+def _verify_inputs(
+    output_file: str, yaml_file: Optional[str], json_file: Optional[str]
+) -> None:
+    if (yaml_file is None and json_file is None) or output_file is None:
+        _help()
+        exit(1)
 
 
 def convert(
     output_file: str, yaml_file: Optional[str] = None, json_file: Optional[str] = None
 ) -> None:
-    if yaml_file is None and json_file is None or output_file is None:
-        _help()
-        raise RuntimeError(
-            "One of yaml_file or json_file is required along with output_file"
-        )
+    _verify_inputs(output_file=output_file, yaml_file=yaml_file, json_file=json_file)
 
     data = _get_json_data(json_file) if json_file else _get_yaml_data(yaml_file)
     with io.open(output_file, "w", encoding="utf-8") as md_file:
