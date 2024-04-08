@@ -2,9 +2,15 @@ name: CD Pipeline
 run-name: CD 📦🚀
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types: [completed]
     branches:
       - "main"
+    paths:
+      - "src/**"
+      - "requirements.txt"
+      - "LICENSE"
 
 jobs:
   CD:
@@ -21,10 +27,6 @@ jobs:
         uses: jetpack-io/devbox-install-action@v0.8.0
       - name: Install all dependencies 📦
         run: devbox run install
-      - name: 🧹 Linting & Formatting
-        run: devbox run lint && devbox run format
-      - name: 🧪 Running Tests
-        run: devbox run test
       - name: 📦 Package
         run: devbox run build
       - name: 🚀 Publish to PyPI

@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 
 long_description = long_description.replace(
     "](", "](https://anevis.github.io/yaml-to-markdown/"
-)
+).replace(".md)", ".html)")
 
 with open("requirements.txt", "r") as req_file:
     raw_requirements = req_file.readlines()
