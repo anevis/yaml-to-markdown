@@ -17,7 +17,7 @@
         "pytest src/"
       ],
       "test-cov": [
-        "pytest src/ --cov=src/ --cov-report=xml"
+        "pytest --cov=src/ --cov-report=xml"
       ],
       "lint": [
         "flake8 src/"

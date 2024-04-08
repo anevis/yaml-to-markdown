@@ -1,0 +1,10 @@
+[run]
+branch = true
+source = src/
+relative_files = true
+omit =
+    # Omit any test files
+    */*_test.py
+
+[xml]
+output = ./coverage.xml
