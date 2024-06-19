@@ -30,3 +30,4 @@ types-mock==5.1.0.20240311
 types-orjson==3.6.2
 types-PyYAML==6.0.12.20240311
 types-jsonschema==4.21.0.20240331
+urllib3>=2.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
