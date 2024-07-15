@@ -21,7 +21,7 @@ pep8-naming==0.13.3
 safety
 
 # Packaging
-setuptools==69.5.1
+setuptools==70.0.0
 twine==5.0.0
 wheel==0.43.0
 
