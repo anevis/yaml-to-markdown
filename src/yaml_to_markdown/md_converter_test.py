@@ -1,9 +1,9 @@
 from copy import deepcopy
 from io import StringIO
-from typing import Dict, Any
+from typing import Any
+from unittest import mock
 
 import pytest
-from mock import mock
 
 from yaml_to_markdown.md_converter import MDConverter
 
@@ -41,7 +41,10 @@ class TestMDConverter:
     def test_process_list_of_list(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = [["list1 data1", "list1 data2"], ["list2 data1", "list2 data2"]]
+        data = [
+            ["list1 data1", "list1 data2"],
+            ["list2 data1", "list2 data2"],
+        ]
 
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
@@ -60,7 +63,7 @@ class TestMDConverter:
     def test_process_section_with_str(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {"section1": "data1"}
+        data: dict[str, Any] = {"section1": "data1"}
 
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
@@ -75,7 +78,7 @@ data1
     def test_process_section_with_list_str(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {"section1": _LIST_ITEMS}
+        data: dict[str, Any] = {"section1": _LIST_ITEMS}
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
 
@@ -90,7 +93,7 @@ data1
     def test_process_section_with_list_dict(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {"section1": _TABLE_ITEMS}
+        data: dict[str, Any] = {"section1": _TABLE_ITEMS}
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
 
@@ -107,7 +110,7 @@ data1
     def test_process_section_with_list_list(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {
+        data: dict[str, Any] = {
             "section1": [
                 ["R1C1", "R1C2"],
                 ["R2C1", "R2C2"],
@@ -131,7 +134,7 @@ data1
         output_writer = StringIO()
         md_converter = MDConverter()
         md_converter.set_selected_sections(["sec-two"])
-        data = {"sec-one": "First section", "sec-two": "Second Section"}
+        data: dict[str, Any] = {"sec-one": "First section", "sec-two": "Second Section"}
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
 
@@ -143,7 +146,7 @@ Second Section
         )
 
     @pytest.mark.parametrize(
-        "extra_item,expected_output",
+        ("extra_item", "expected_output"),
         [
             (
                 {
@@ -181,13 +184,13 @@ Line 3""",
         ],
     )
     def test_process_section(
-        self, extra_item: Dict[str, Any], expected_output: str
+        self, extra_item: dict[str, Any], expected_output: str
     ) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        _table_items = deepcopy(_TABLE_ITEMS)
+        _table_items = [deepcopy(itm) for itm in _TABLE_ITEMS]
         _table_items.append(extra_item)
-        data = {
+        data: dict[str, Any] = {
             "section-one": _table_items,
             "section-two": _LIST_ITEMS,
         }
@@ -211,7 +214,7 @@ Line 3""",
     def test_process_section_with_image(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {"section1": "something.png"}
+        data: dict[str, Any] = {"section1": "something.png"}
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
 
@@ -225,7 +228,7 @@ Line 3""",
     def test_process_section_with_http_link(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {"section1": "https://something.html"}
+        data: dict[str, Any] = {"section1": "https://something.html"}
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
 
@@ -239,7 +242,7 @@ Line 3""",
     def test_process_section_with_relative_link(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {
+        data: dict[str, Any] = {
             "section0": "My section",
             "section1": "./something.puml",
             "section2": "/dit/something.puml",
@@ -265,7 +268,7 @@ My section
         output_writer = StringIO()
         md_converter = MDConverter()
         md_converter.set_selected_sections(["s3", "s2", "s1", "s4"])
-        data = {
+        data: dict[str, Any] = {
             "s1": "Sec 1",
             "s2": "Sec 2",
             "s3": "Sec 3",
@@ -287,7 +290,7 @@ Sec 1
     def test_process_section_with_dict(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        data = {"section1": {"key1": "value1", "key2": "value2"}}
+        data: dict[str, Any] = {"section1": {"key1": "value1", "key2": "value2"}}
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
 
@@ -311,7 +314,7 @@ value2
         md_converter.set_custom_section_processors(
             custom_processors={section_name: mock_function}
         )
-        data = {section_name: section_value}
+        data: dict[str, Any] = {section_name: section_value}
         md_converter.convert(data, output_writer)
         output_writer.getvalue()
 
@@ -321,7 +324,7 @@ value2
 
 
 def test_dummy() -> None:
-    data = {
+    data: dict[str, Any] = {
         "name": "John Doe",
         "age": 30,
         "city": "Sydney",

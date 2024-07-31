@@ -1,6 +1,7 @@
-import io
 import json
-from typing import Dict, Any, Optional
+import sys
+from pathlib import Path
+from typing import Any
 
 import click
 import yaml
@@ -8,13 +9,13 @@ import yaml
 from yaml_to_markdown.md_converter import MDConverter
 
 
-def _get_json_data(json_file: str) -> Dict[str, Any]:
-    with io.open(json_file, "r", encoding="utf-8") as j_file:
+def _get_json_data(json_file: str) -> dict[str, Any]:
+    with Path(json_file).open("r", encoding="utf-8") as j_file:
         return json.load(j_file)
 
 
-def _get_yaml_data(yaml_file: str) -> Dict[str, Any]:
-    with io.open(yaml_file, "r", encoding="utf-8") as y_file:
+def _get_yaml_data(yaml_file: str) -> dict[str, Any]:
+    with Path(yaml_file).open("r", encoding="utf-8") as y_file:
         return yaml.safe_load(y_file)
 
 
@@ -46,8 +47,8 @@ def _help() -> None:
 @click.option("-h", "--help", "show_help", default=False, is_flag=True)
 def main(
     output_file: str,
-    yaml_file: Optional[str],
-    json_file: Optional[str],
+    yaml_file: str | None,
+    json_file: str | None,
     show_help: bool,
 ) -> None:
     if show_help:
@@ -59,20 +60,30 @@ def main(
 
 
 def _verify_inputs(
-    output_file: str, yaml_file: Optional[str], json_file: Optional[str]
+    output_file: str, yaml_file: str | None, json_file: str | None
 ) -> None:
     if (yaml_file is None and json_file is None) or output_file is None:
         _help()
-        exit(1)
+        sys.exit(1)
+
+
+def _get_data(yaml_file: str | None, json_file: str | None) -> dict[str, Any]:
+    if json_file:
+        return _get_json_data(json_file)
+    if yaml_file:
+        return _get_yaml_data(yaml_file)
+
+    _help()
+    sys.exit(1)
 
 
 def convert(
-    output_file: str, yaml_file: Optional[str] = None, json_file: Optional[str] = None
+    output_file: str, yaml_file: str | None = None, json_file: str | None = None
 ) -> None:
     _verify_inputs(output_file=output_file, yaml_file=yaml_file, json_file=json_file)
 
-    data = _get_json_data(json_file) if json_file else _get_yaml_data(yaml_file)
-    with io.open(output_file, "w", encoding="utf-8") as md_file:
+    data = _get_data(yaml_file=yaml_file, json_file=json_file)
+    with Path(output_file).open("w", encoding="utf-8") as md_file:
         MDConverter().convert(data=data, output_writer=md_file)
 
 

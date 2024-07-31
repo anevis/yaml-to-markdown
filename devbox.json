@@ -1,6 +1,6 @@
 {
   "$schema":  "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
-  "packages": ["python@3.12.2"],
+  "packages": ["python@3.12"],
   "env": {
     "VENV_DIR": "$HOME/MyFiles/programming/OpenSource/yaml-to-markdown/.devbox/virtenv/python/.venv",
     "TWINE_USERNAME": "__token__"
@@ -10,30 +10,15 @@
       ". $VENV_DIR/bin/activate"
     ],
     "scripts": {
-      "install": [
-        "pip install -r requirements.txt"
-      ],
-      "test": [
-        "pytest src/"
-      ],
-      "test-cov": [
-        "pytest --cov=src/ --cov-report=xml"
-      ],
-      "lint": [
-        "flake8 src/"
-      ],
-      "format-check": [
-        "black --check src/"
-      ],
-      "format": [
-        "black src/"
-      ],
-      "build": [
-        "rm -rf dist/* && python setup.py sdist bdist_wheel"
-      ],
-      "publish": [
-        "twine upload dist/*"
-      ]
+      "audit": "safety check --short-report -r requirements.txt",
+      "build": "rm -rf dist/* && python setup.py sdist bdist_wheel",
+      "format": "ruff check --fix src/ && ruff format src/",
+      "install": "pip install -r requirements.txt",
+      "lint": "ruff check src/",
+      "publish": "twine upload dist/*",
+      "test": "pytest src/",
+      "test-cov": "pytest --cov=src/ --cov-report=xml",
+      "type-check": "mypy --config-file=src/pyproject.toml src/"
     }
   }
 }

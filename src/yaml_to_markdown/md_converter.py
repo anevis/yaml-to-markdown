@@ -1,23 +1,22 @@
 from __future__ import annotations
 
-from typing import Any, Dict, IO, List, Optional, Union, Callable
+from collections.abc import Callable
+from typing import IO, Any
 
 from yaml_to_markdown.utils import convert_to_title_case
 
 
 class MDConverter:
     def __init__(self) -> None:
-        """
-        Converter to convert a JSON object into Markdown.
-        """
-        self._sections: Optional[List[str]] = None
-        self._custom_processors: Optional[
-            Dict[str, Callable[[MDConverter, Optional[str], Any, int], str]]
-        ] = None
+        """Converter to convert a JSON object into Markdown."""
+        self._sections: list[str] | None = None
+        self._custom_processors: (
+            dict[str, Callable[[MDConverter, str | None, Any, int], str]] | None
+        ) = None
 
-    def set_selected_sections(self, sections: List[str]) -> None:
-        """
-        Set the sections (JSON keys) to include in the Markdown.
+    def set_selected_sections(self, sections: list[str]) -> None:
+        """Set the sections (JSON keys) to include in the Markdown.
+
         By default, all sections will be included.
 
         Args:
@@ -27,13 +26,14 @@ class MDConverter:
 
     def set_custom_section_processors(
         self,
-        custom_processors: Dict[
-            str, Callable[[MDConverter, Optional[str], Any, int], str]
+        custom_processors: dict[
+            str, Callable[[MDConverter, str | None, Any, int], str]
         ],
     ) -> None:
-        """
-        Set custom section processors, the key must match a section name/key
-        and the processor must take 4 arguments and return a Markdown string:
+        """Set custom section processors.
+
+        The key must match a section name/key and the processor must take
+         4 arguments and return a Markdown string:
             converter (MDConverter): The current converter object.
             section ([str]): The section key
             data (Union[List[Any], Dict[str, Any], str]): The data for the section
@@ -46,69 +46,70 @@ class MDConverter:
 
     def convert(
         self,
-        data: Union[Dict[str, Union[List[Any], Dict[str, Any], str]], List[Any]],
+        data: (
+            dict[str, str | list[Any] | list[dict[str, str]] | dict[str, Any]]
+            | list[Any]
+        ),
         output_writer: IO[str],
     ) -> None:
-        """
-        Convert the given JSON object into Markdown.
+        """Convert the given JSON object into Markdown.
 
         Args:
-            data (Union[Dict[str, Union[List[Any], Dict[str, Any], str]], List[Any]]):
+            data (dict[str, str] | dict[str, list[Any]] | dict[str, list[dict[str, str]]]
+             | dict[str, dict[str, Any]] | list[Any]):
                 The JSON object to convert, either a dictionary or a list.
             output_writer (IO[str]):
                 The output stream object to write the Markdown to.
         """
         if isinstance(data, dict):
-            self._process_dict(data, output_writer)
+            self._process_dict(data, output_writer)  # type: ignore
         elif isinstance(data, list):
             self._process_dict({None: data}, output_writer)
 
     def _process_dict(
         self,
-        data: Dict[Optional[str], Any],
+        data: dict[str | None, str | list[Any] | list[dict[str, str]] | dict[str, Any]],
         output_writer: IO[str],
     ) -> None:
-        for section in self._sections if self._sections is not None else data.keys():
+        for section in self._sections if self._sections is not None else data:
             if section in data:
                 output_writer.write(self.process_section(section, data.get(section)))
 
     def process_section(
         self,
-        section: Optional[str],
-        data: Union[List[Any], Dict[str, Any], str],
+        section: str | None,
+        data: Any | list[Any] | dict[str, Any] | str,
         level: int = 2,
     ) -> str:
         section_title = (
             f" {convert_to_title_case(section)}" if section is not None else ""
         )
+        head_str = "#" * level
         if self._custom_processors and section in self._custom_processors:
             section_str = self._custom_processors[section](self, section, data, level)
         elif isinstance(data, list):
-            section_str = (
-                f"{'#' * level}{section_title}\n{self._process_list(data=data)}"
-            )
+            section_str = f"{head_str}{section_title}\n{self._process_list(data=data)}"
         elif isinstance(data, dict):
-            section_str = f"{'#' * level}{section_title}\n"
-            for section in data.keys():
-                section_str += self.process_section(
-                    section, data.get(section), level=level + 1
-                )
+            section_str = f"{head_str}{section_title}\n"
+            for sec in data:
+                section_str += self.process_section(sec, data.get(sec), level=level + 1)
         else:
-            section_str = self._get_str(section, data, level)
+            section_str = self._get_str(
+                section if section is not None else "", data, level
+            )
         return f"{section_str}\n"
 
-    def _process_list(self, data: List[Any]) -> str:
+    def _process_list(self, data: list[Any]) -> str:
         if isinstance(data[0], dict):
             return self._process_table(data)
-        elif isinstance(data[0], list):
+        if isinstance(data[0], list):
             list_str = ""
             for item in data:
                 list_str += f"{self._process_list(item)}\n"
             return list_str
-        else:
-            return "\n".join([f"* {item}" for item in data])
+        return "\n".join([f"* {item}" for item in data])
 
-    def _process_table(self, data: List[Dict[str, str]]) -> str:
+    def _process_table(self, data: list[dict[str, str]]) -> str:
         columns = self._get_columns(data)
         table_str = self._process_columns(columns)
         for row in data:
@@ -118,16 +119,16 @@ class MDConverter:
         return table_str
 
     @staticmethod
-    def _process_columns(columns: List[str]) -> str:
+    def _process_columns(columns: list[str]) -> str:
         column_titles = " | ".join([convert_to_title_case(col) for col in columns])
         col_sep = " | ".join(["---" for _ in columns])
         return f"| {column_titles} |\n| {col_sep} |"
 
     @staticmethod
-    def _get_columns(data: List[Dict[str, Any]]) -> List[str]:
-        columns: List[str] = []
+    def _get_columns(data: list[dict[str, Any]]) -> list[str]:
+        columns: list[str] = []
         for row in data:
-            for col in row.keys():
+            for col in row:
                 if col not in columns:
                     columns.append(col)
         return columns
@@ -138,29 +139,37 @@ class MDConverter:
         if isinstance(data, list):
             lst_str = "".join([f"<li>{item}</li>" for item in data])
             return f"<ul>{lst_str}</ul>"
-        elif self._is_image(str_data):
+        if self._is_image(str_data):
             return f"{prefix}![{convert_to_title_case(text)}]({str_data})"
-        elif self._is_link(str_data):
+        if self._is_link(str_data):
             return f"{prefix}[{convert_to_title_case(text)}]({str_data})"
-        else:
-            value = str_data.replace("\n", "<br/>")
-            if level > 0:
-                value = f"{'#' * level} {convert_to_title_case(text)}\n{value}"
-            return value
+        value = str_data.replace("\n", "<br/>")
+        if level > 0:
+            head_str = "#" * level
+            value = f"{head_str} {convert_to_title_case(text)}\n{value}"
+        return value
 
     @staticmethod
     def _is_image(data: str) -> bool:
         file_ext = data.split(".")[-1]
-        return file_ext and file_ext.lower() in ("png", "jpg", "jpeg", "gif", "svg")
+        return file_ext is not None and file_ext.lower() in {
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "svg",
+        }
 
     @staticmethod
     def _is_link(data: str) -> bool:
         file_ext = data.split(".")[-1]
+        min_file_ext_len = 3
+        max_file_ext_len = 4
         return (
             "\n" not in data
             and "." in data
             and file_ext is not None
-            and (len(file_ext) == 4 or len(file_ext) == 3)
+            and (len(file_ext) == max_file_ext_len or len(file_ext) == min_file_ext_len)
         ) or (
             data.lower().startswith("http")
             or data.lower().startswith("./")
