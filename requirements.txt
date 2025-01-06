@@ -10,7 +10,7 @@ pytest-cov==6.0.0
 
 mypy==1.14.1
 ruff==0.6.3
-safety==3.2.11
+safety==3.2.14
 
 # Packaging
 setuptools==75.6.0
