@@ -188,10 +188,10 @@ Line 3""",
     ) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
-        _table_items = [deepcopy(itm) for itm in _TABLE_ITEMS]
-        _table_items.append(extra_item)
+        table_items = [deepcopy(itm) for itm in _TABLE_ITEMS]
+        table_items.append(extra_item)
         data: dict[str, Any] = {
-            "section-one": _table_items,
+            "section-one": table_items,
             "section-two": _LIST_ITEMS,
         }
         md_converter.convert(data, output_writer)
