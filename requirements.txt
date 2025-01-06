@@ -13,7 +13,7 @@ ruff==0.6.3
 safety==3.2.11
 
 # Packaging
-setuptools==74.0.0
+setuptools==75.6.0
 twine==5.1.1
 wheel==0.45.1
 
