@@ -9,7 +9,7 @@ pytest==8.3.4
 pytest-cov==6.0.0
 
 mypy==1.14.1
-ruff==0.8.6
+ruff==0.9.7
 safety==3.2.14
 
 # Packaging
