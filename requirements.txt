@@ -4,7 +4,6 @@ pyyaml==6.0.2
 
 # Dev dependencies
 coverage==7.8.0
-mock==5.2.0
 pytest==8.3.5
 pytest-cov==6.0.0
 
@@ -18,7 +17,6 @@ twine==6.1.0
 wheel==0.45.1
 
 # Typing
-types-mock==5.2.0.20250306
 types-orjson==3.6.2
 types-PyYAML==6.0.12.20250402
 types-jsonschema==4.23.0.20241208
