@@ -20,5 +20,5 @@ wheel==0.45.1
 # Typing
 types-mock==5.1.0.20240425
 types-orjson==3.6.2
-types-PyYAML==6.0.12.20241230
+types-PyYAML==6.0.12.20250402
 types-jsonschema==4.23.0.20241208
