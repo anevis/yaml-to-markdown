@@ -18,5 +18,5 @@ wheel==0.45.1
 
 # Typing
 types-orjson==3.6.2
-types-PyYAML==6.0.12.20250402
+types-PyYAML==6.0.12.20250822
 types-jsonschema==4.23.0.20241208
