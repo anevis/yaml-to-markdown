@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import IO, Any
+import pathlib
+import urllib.parse
 
 from yaml_to_markdown.utils import convert_to_title_case
 
@@ -162,16 +164,22 @@ class MDConverter:
 
     @staticmethod
     def _is_link(data: str) -> bool:
-        file_ext = data.split(".")[-1]
-        min_file_ext_len = 3
-        max_file_ext_len = 4
-        return (
-            "\n" not in data
-            and "." in data
-            and file_ext is not None
-            and (len(file_ext) == max_file_ext_len or len(file_ext) == min_file_ext_len)
-        ) or (
-            data.lower().startswith("http")
-            or data.lower().startswith("./")
-            or data.lower().startswith("/")
+        data_as_path = pathlib.Path(data)
+        is_a_file_that_actually_exists = data_as_path.exists() and data_as_path.is_file()
+        is_explicitly_relative_to_current_directory = data_as_path.is_relative_to('.') and data.startswith('./')
+
+        contains_no_newline = "\n" not in data
+
+        data_as_uri = urllib.parse.urlparse(data)
+        is_valid_uri = data_as_uri.scheme != '' and data_as_uri.netloc != ''
+
+        result = contains_no_newline and (
+            is_valid_uri
+            or (
+                is_a_file_that_actually_exists and (
+                    is_explicitly_relative_to_current_directory
+                    or data_as_path.is_absolute()
+                )
+            )
         )
+        return result
