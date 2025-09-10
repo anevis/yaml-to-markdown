@@ -1,6 +1,6 @@
 name: CI Pipeline
 run-name: CI 🚀
-on: [push]
+on: [push, fork, workflow_dispatch]
 jobs:
   CI:
     runs-on: ubuntu-latest
