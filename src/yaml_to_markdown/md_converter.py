@@ -151,7 +151,7 @@ class MDConverter:
 
     @staticmethod
     def _is_image(data: str) -> bool:
-        file_ext = data.split(".")[-1]
+        file_ext = data.rsplit(".", maxsplit=1)
         return file_ext is not None and file_ext.lower() in {
             "png",
             "jpg",
@@ -162,7 +162,7 @@ class MDConverter:
 
     @staticmethod
     def _is_link(data: str) -> bool:
-        file_ext = data.split(".")[-1]
+        file_ext = data.rsplit(".", maxsplit=1)
         min_file_ext_len = 3
         max_file_ext_len = 4
         return (
