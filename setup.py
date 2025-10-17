@@ -17,11 +17,12 @@ with open("requirements.txt", "r") as req_file:
 
 requirements: List[str] = []
 for req in raw_requirements:
-    if req.strip() == "# Dev dependencies":
+    req = req.strip()
+    if req == "# Dev dependencies":
         break
-    if req.startswith("#") or req.strip() == "":
+    if req.startswith("#") or req == "":
         continue
-    requirements.append(req.strip())
+    requirements.append(req.replace("==", ">="))
 
 setup(
     name="yaml-to-markdown",
