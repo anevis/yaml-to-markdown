@@ -166,14 +166,14 @@ class MDConverter:
     def _is_link(data: str) -> bool:
         data_as_path = pathlib.Path(data)
         is_a_file_that_actually_exists = data_as_path.exists() and data_as_path.is_file()
-        is_explicitly_relative_to_current_directory = data_as_path.is_relative_to('.') and data.startswith('./')
+        is_explicitly_relative_to_current_directory = data_as_path.is_relative_to(".") and data.startswith("./")
 
         contains_no_newline = "\n" not in data
 
         data_as_uri = urllib.parse.urlparse(data)
-        is_valid_uri = data_as_uri.scheme != '' and data_as_uri.netloc != ''
+        is_valid_uri = data_as_uri.scheme != "" and data_as_uri.netloc != ""
 
-        result = contains_no_newline and (
+        return contains_no_newline and (
             is_valid_uri
             or (
                 is_a_file_that_actually_exists and (
@@ -182,4 +182,3 @@ class MDConverter:
                 )
             )
         )
-        return result
