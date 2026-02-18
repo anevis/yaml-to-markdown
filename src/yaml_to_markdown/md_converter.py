@@ -26,9 +26,7 @@ class MDConverter:
 
     def set_custom_section_processors(
         self,
-        custom_processors: dict[
-            str, Callable[[MDConverter, str | None, Any, int], str]
-        ],
+        custom_processors: dict[str, Callable[[MDConverter, str | None, Any, int], str]],
     ) -> None:
         """Set custom section processors.
 
@@ -47,8 +45,7 @@ class MDConverter:
     def convert(
         self,
         data: (
-            dict[str, str | list[Any] | list[dict[str, str]] | dict[str, Any]]
-            | list[Any]
+            dict[str, str | list[Any] | list[dict[str, str]] | dict[str, Any]] | list[Any]
         ),
         output_writer: IO[str],
     ) -> None:
@@ -151,7 +148,7 @@ class MDConverter:
 
     @staticmethod
     def _is_image(data: str) -> bool:
-        file_ext = data.rsplit(".", maxsplit=1)
+        file_ext = data.rsplit(".", maxsplit=1)[0]
         return file_ext is not None and file_ext.lower() in {
             "png",
             "jpg",
@@ -162,7 +159,7 @@ class MDConverter:
 
     @staticmethod
     def _is_link(data: str) -> bool:
-        file_ext = data.rsplit(".", maxsplit=1)
+        file_ext = data.rsplit(".", maxsplit=1)[0]
         min_file_ext_len = 3
         max_file_ext_len = 4
         return (

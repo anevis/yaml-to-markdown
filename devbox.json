@@ -1,8 +1,9 @@
 {
-  "$schema":  "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
-  "packages": ["python@3.12"],
+  "packages": [
+    "python@3.14",
+    "uv@latest"
+  ],
   "env": {
-    "VENV_DIR": "$HOME/MyFiles/programming/OpenSource/yaml-to-markdown/.devbox/virtenv/python/.venv",
     "TWINE_USERNAME": "__token__"
   },
   "shell": {
@@ -10,15 +11,13 @@
       ". $VENV_DIR/bin/activate"
     ],
     "scripts": {
-      "audit": "safety check --short-report -r requirements.txt",
-      "build": "rm -rf dist/* && python setup.py sdist bdist_wheel",
-      "format": "ruff check --fix src/ && ruff format src/",
-      "install": "pip install -r requirements.txt",
-      "lint": "ruff check src/",
-      "publish": "twine upload dist/*",
-      "test": "pytest src/",
-      "test-cov": "pytest --cov=src/ --cov-report=xml",
-      "type-check": "mypy --config-file=src/pyproject.toml src/"
+      "build": "scripts/build.sh",
+      "format": "scripts/format.sh",
+      "install": "scripts/install.sh",
+      "lint": "scripts/lint.sh",
+      "publish": "scripts/publish.sh",
+      "test": "scripts/test.sh",
+      "upgrade": "scripts/upgrade.sh"
     }
   }
 }
