@@ -20,16 +20,13 @@ dependencies = [
 [dependency-groups]
 dev = [
     "coverage",
+    "mypy",
     "pytest",
     "pytest-cov",
-    "mypy",
     "ruff",
-    "setuptools",
-    "twine",
-    "types-orjson",
     "types-PyYAML",
     "types-jsonschema",
-    "wheel",
+    "types-orjson",
 ]
 
 [project.urls]
