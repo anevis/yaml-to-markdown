@@ -1,7 +1,7 @@
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import click
 import yaml
@@ -11,12 +11,12 @@ from yaml_to_markdown.md_converter import MDConverter
 
 def _get_json_data(json_file: str) -> dict[str, Any]:
     with Path(json_file).open("r", encoding="utf-8") as j_file:
-        return json.load(j_file)
+        return cast("dict[str, Any]", json.load(j_file))
 
 
 def _get_yaml_data(yaml_file: str) -> dict[str, Any]:
     with Path(yaml_file).open("r", encoding="utf-8") as y_file:
-        return yaml.safe_load(y_file)
+        return cast("dict[str, Any]", yaml.safe_load(y_file))
 
 
 def _help() -> None:
@@ -34,9 +34,7 @@ def _help() -> None:
         "    -j, --json-file <json_file>: Path to the JSON file as a string [Optional]"
     )
     click.echo("    -h, --help: Show this message and exit.")
-    click.echo(
-        "Note: Either yaml_file or json_file is required along with output_file."
-    )
+    click.echo("Note: Either yaml_file or json_file is required along with output_file.")
     click.echo("Example: yaml-to-markdown -o output.md -y data.yaml")
 
 
