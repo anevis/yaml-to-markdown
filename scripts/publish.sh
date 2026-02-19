@@ -5,5 +5,5 @@ set -euo pipefail
 
 source "$(dirname "$0")/includes/init.sh"
 
-log "Publishing all files in ${BUILD_OUTPUT_DIR} to PyPi using uv ..."
+echo "Publishing all files in ${BUILD_OUTPUT_DIR} to PyPi using uv ..."
 uv publish --publish-url https://test.pypi.org/legacy/ "${BUILD_OUTPUT_DIR}/*"
