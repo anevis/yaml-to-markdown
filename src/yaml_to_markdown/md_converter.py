@@ -26,9 +26,7 @@ class MDConverter:
 
     def set_custom_section_processors(
         self,
-        custom_processors: dict[
-            str, Callable[[MDConverter, str | None, Any, int], str]
-        ],
+        custom_processors: dict[str, Callable[[MDConverter, str | None, Any, int], str]],
     ) -> None:
         """Set custom section processors.
 
@@ -47,8 +45,7 @@ class MDConverter:
     def convert(
         self,
         data: (
-            dict[str, str | list[Any] | list[dict[str, str]] | dict[str, Any]]
-            | list[Any]
+            dict[str, str | list[Any] | list[dict[str, str]] | dict[str, Any]] | list[Any]
         ),
         output_writer: IO[str],
     ) -> None:
@@ -149,9 +146,8 @@ class MDConverter:
             value = f"{head_str} {convert_to_title_case(text)}\n{value}"
         return value
 
-    @staticmethod
-    def _is_image(data: str) -> bool:
-        file_ext = data.split(".")[-1]
+    def _is_image(self, data: str) -> bool:
+        file_ext = self._get_file_ext(data)
         return file_ext is not None and file_ext.lower() in {
             "png",
             "jpg",
@@ -161,8 +157,13 @@ class MDConverter:
         }
 
     @staticmethod
-    def _is_link(data: str) -> bool:
-        file_ext = data.split(".")[-1]
+    def _get_file_ext(data: str) -> str | None:
+        if "." in data:
+            return data.rsplit(".", maxsplit=1)[-1]
+        return None
+
+    def _is_link(self, data: str) -> bool:
+        file_ext = self._get_file_ext(data)
         min_file_ext_len = 3
         max_file_ext_len = 4
         return (

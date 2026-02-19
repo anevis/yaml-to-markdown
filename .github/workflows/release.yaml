@@ -14,17 +14,17 @@ jobs:
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: Installing Devbox ⚙️
-        uses: jetify-com/devbox-install-action@v0.11.0
+        uses: jetify-com/devbox-install-action@v0.14.0
       - name: Install all dependencies 📦
         run: devbox run install
       - name: Release Version 🏷
         run: echo "RELEASE_VERSION=0.1.$(date +%s)" >> "$GITHUB_ENV"
       - name: Create Tag
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.git.createRef({
@@ -34,7 +34,7 @@ jobs:
               sha: context.sha
             })
       - name: Create Release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.repos.createRelease({
@@ -51,6 +51,6 @@ jobs:
       - name: 🚀 Publish to PyPI
         run: devbox run publish
         env:
-          TWINE_USERNAME: "__token__"
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          UV_PUBLISH_USERNAME: ${{ secrets.UV_PUBLISH_USERNAME }}
+          UV_PUBLISH_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
