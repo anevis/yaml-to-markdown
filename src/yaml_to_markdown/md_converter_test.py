@@ -2,6 +2,7 @@ from copy import deepcopy
 from io import StringIO
 from typing import Any
 from unittest import mock
+from unittest.mock import Mock
 
 import pytest
 
@@ -239,7 +240,17 @@ Line 3""",
 """
         )
 
-    def test_process_section_with_relative_link(self) -> None:
+    @mock.patch("yaml_to_markdown.md_converter.Path")
+    def test_process_section_with_relative_link(self, mock_path: Mock) -> None:
+        def _path_side_effect(path_str: str) -> Mock:
+            path_instance = Mock()
+            value = path_str != "My section" and not path_str.endswith(".net")
+            path_instance.exists.return_value = value
+            path_instance.is_file.return_value = value
+            path_instance.is_relative_to.return_value = value
+            return path_instance
+
+        mock_path.side_effect = _path_side_effect
         output_writer = StringIO()
         md_converter = MDConverter()
         data: dict[str, Any] = {
@@ -247,6 +258,7 @@ Line 3""",
             "section1": "./something.puml",
             "section2": "/dit/something.puml",
             "section3": "something.puml",
+            "section4": "designation-identity.company-intra.net",
         }
         md_converter.convert(data, output_writer)
         output = output_writer.getvalue()
@@ -261,6 +273,8 @@ My section
 [Section2](/dit/something.puml)
 
 [Section3](something.puml)
+## Section4
+designation-identity.company-intra.net
 """
         )
 
@@ -309,7 +323,7 @@ value2
         section_name = "custom"
         section_value = ["data1"]
         output_writer = StringIO()
-        mock_function = mock.Mock(return_value="")
+        mock_function = Mock(return_value="")
         md_converter = MDConverter()
         md_converter.set_custom_section_processors(
             custom_processors={section_name: mock_function}
