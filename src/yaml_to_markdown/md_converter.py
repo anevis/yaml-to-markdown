@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import IO, Any
-import pathlib
 import urllib.parse
+from collections.abc import Callable
+from pathlib import Path
+from typing import IO, Any
 
 from yaml_to_markdown.utils import convert_to_title_case
 
@@ -157,28 +157,38 @@ class MDConverter:
             "gif",
             "svg",
         }
-    
+
+    @staticmethod
     def _get_file_ext(data: str) -> str | None:
         if "." in data:
             return data.rsplit(".", maxsplit=1)[-1]
         return None
 
-    @staticmethod
-    def _is_link(data: str) -> bool:
-        data_as_path = pathlib.Path(data)
-        is_a_file_that_actually_exists = data_as_path.exists() and data_as_path.is_file()
-        is_explicitly_relative_to_current_directory = data_as_path.is_relative_to(".") and data.startswith("./")
-
+    def _is_link(self, data: str) -> bool:
         contains_no_newline = "\n" not in data
 
-        data_as_uri = urllib.parse.urlparse(data)
-        is_valid_uri = data_as_uri.scheme != "" and data_as_uri.netloc != ""
+        if contains_no_newline and self._is_local_file(data):
+            return True
 
-        return contains_no_newline and (
-            is_valid_uri
-            or (
-                is_a_file_that_actually_exists and (
-                    is_explicitly_relative_to_current_directory
-                    or data_as_path.is_absolute()
-                )
-            )
+        return contains_no_newline and self._is_valid_uri(data)
+
+    @staticmethod
+    def _is_local_file(file_path: str) -> bool:
+        data_as_path = Path(file_path)
+        if not data_as_path.is_file() or not data_as_path.exists():
+            return False
+
+        is_relative = data_as_path.is_relative_to(
+            "."
+        )
+        is_explicitly_relative_to_current_directory = is_relative and file_path.startswith("./")
+
+        return (
+            is_explicitly_relative_to_current_directory
+            or data_as_path.is_absolute()
+        )
+
+    @staticmethod
+    def _is_valid_uri(uri: str) -> bool:
+        data_as_uri = urllib.parse.urlparse(uri)
+        return data_as_uri.scheme != "" and data_as_uri.netloc != ""  # noqa: PLC1901
