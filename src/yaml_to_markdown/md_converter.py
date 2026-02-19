@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import urllib.parse
 from collections.abc import Callable
+from pathlib import Path
 from typing import IO, Any
 
 from yaml_to_markdown.utils import convert_to_title_case
@@ -163,16 +165,27 @@ class MDConverter:
         return None
 
     def _is_link(self, data: str) -> bool:
-        file_ext = self._get_file_ext(data)
-        min_file_ext_len = 3
-        max_file_ext_len = 4
-        return (
-            "\n" not in data
-            and "." in data
-            and file_ext is not None
-            and (len(file_ext) == max_file_ext_len or len(file_ext) == min_file_ext_len)
-        ) or (
-            data.lower().startswith("http")
-            or data.lower().startswith("./")
-            or data.lower().startswith("/")
+        contains_no_newline = "\n" not in data
+
+        if contains_no_newline and self._is_local_file(data):
+            return True
+
+        return contains_no_newline and self._is_valid_uri(data)
+
+    @staticmethod
+    def _is_local_file(file_path: str) -> bool:
+        data_as_path = Path(file_path)
+        if not data_as_path.is_file() or not data_as_path.exists():
+            return False
+
+        is_relative = data_as_path.is_relative_to(".")
+        is_explicitly_relative_to_current_directory = (
+            is_relative and file_path.startswith("./")
         )
+
+        return is_explicitly_relative_to_current_directory or data_as_path.is_absolute()
+
+    @staticmethod
+    def _is_valid_uri(uri: str) -> bool:
+        data_as_uri = urllib.parse.urlparse(uri)
+        return data_as_uri.scheme != "" and data_as_uri.netloc != ""  # noqa: PLC1901
