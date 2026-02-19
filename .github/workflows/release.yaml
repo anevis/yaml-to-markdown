@@ -51,6 +51,5 @@ jobs:
       - name: 🚀 Publish to PyPI
         run: devbox run publish
         env:
-          UV_PUBLISH_USERNAME: ${{ secrets.UV_PUBLISH_USERNAME }}
-          UV_PUBLISH_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          UV_PUBLISH_TOKEN: ${{ secrets.TWINE_PASSWORD }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
