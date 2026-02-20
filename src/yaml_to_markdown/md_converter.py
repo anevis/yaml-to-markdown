@@ -175,7 +175,13 @@ class MDConverter:
     @staticmethod
     def _is_local_file(file_path: str) -> bool:
         data_as_path = Path(file_path)
-        if not data_as_path.is_file() or not data_as_path.exists():
+
+        does_not_refer_to_a_real_file = True
+        try:
+            does_not_refer_to_a_real_file = not data_as_path.is_file() or not data_as_path.exists()
+        except OSError:
+            does_not_refer_to_a_real_file = True
+        if does_not_refer_to_a_real_file:
             return False
 
         is_relative = data_as_path.is_relative_to(".")
