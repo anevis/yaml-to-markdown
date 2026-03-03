@@ -65,6 +65,104 @@ yaml-to-markdown --output-file output.md --json-file test.json
 yaml-to-markdown --output-file output.md --yaml-file test.yaml
 ```
 
+### YAML Conversion Examples
+
+#### Simple Key-Value Pairs
+**Input YAML:**
+```yaml
+name: John Doe
+age: 30
+city: Sydney
+```
+**Output Markdown:**
+```markdown
+## Name
+John Doe
+## Age
+30
+## City
+Sydney
+```
+
+#### Lists
+**Input YAML:**
+```yaml
+hobbies:
+  - reading
+  - swimming
+  - cycling
+```
+**Output Markdown:**
+```markdown
+## Hobbies
+* reading
+* swimming
+* cycling
+```
+
+#### Tables (List of Dictionaries)
+**Input YAML:**
+```yaml
+employees:
+  - name: Alice
+    role: Developer
+    department: Engineering
+  - name: Bob
+    role: Designer
+    department: Creative
+```
+**Output Markdown:**
+```markdown
+## Employees
+| Name | Role | Department |
+| --- | --- | --- |
+| Alice | Developer | Engineering |
+| Bob | Designer | Creative |
+```
+
+#### Nested Structures
+**Input YAML:**
+```yaml
+company:
+  name: Tech Corp
+  location: Sydney
+  departments:
+    engineering: 50
+    sales: 30
+```
+**Output Markdown:**
+```markdown
+## Company
+### Name
+Tech Corp
+### Location
+Sydney
+### Departments
+#### Engineering
+50
+#### Sales
+30
+```
+
+#### Images and Links
+**Input YAML:**
+```yaml
+logo: company-logo.png
+website: https://example.com
+documentation: ./docs/guide.md
+```
+**Output Markdown:**
+```markdown
+
+![Logo](company-logo.png)
+
+[Website](https://example.com)
+
+[Documentation](./docs/guide.md)
+```
+
+**Note:** Files are only converted to links if they exist and are accessible. Invalid files, missing files, or files with permission errors are treated as normal text.
+
 ## Developer Guide
 Please see the [DEVELOPER.md](docs/DEVELOPER.md) file for more information on how to contribute to this project.
 

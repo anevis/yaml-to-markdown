@@ -278,6 +278,48 @@ designation-identity.company-intra.net
 """
         )
 
+    def test_process_section_with_long_value(self) -> None:
+        long_str = (
+            "somethingsomethingsomethingsomethingsomethingsomething"
+            "somethingsomethingsomethingsomethingsomethingsomething"
+            "somethingsomethingsomethingsomethingsomethingsomething"
+            "somethingsomethingsomethingsomethingsomethingsomething"
+            "somethingsomethingsomethingsomethingsomethingsomething"
+            "somethingsomethingsomethingsomethingsomethingsomething"
+        )
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        data: dict[str, Any] = {"section": long_str}
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == f"""## Section
+{long_str}
+"""
+        )
+
+    @mock.patch("yaml_to_markdown.md_converter.Path")
+    def test_process_section_with_relative_link_no_file(self, mock_path: Mock) -> None:
+        path_instance = Mock()
+        path_instance.exists.return_value = False
+        path_instance.is_file.return_value = True
+
+        mock_path.return_value = path_instance
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        data: dict[str, Any] = {"section": "./something.puml"}
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """## Section
+./something.puml
+"""
+        )
+
     def test_process_section_different_section_order(self) -> None:
         output_writer = StringIO()
         md_converter = MDConverter()
@@ -335,17 +377,3 @@ value2
         mock_function.assert_called_once_with(
             md_converter, section_name, section_value, 2
         )
-
-
-def test_dummy() -> None:
-    data: dict[str, Any] = {
-        "name": "John Doe",
-        "age": 30,
-        "city": "Sydney",
-        "hobbies": ["reading", "swimming"],
-    }
-    str_io = StringIO()
-    md_converter = MDConverter()
-    md_converter.convert(data, str_io)
-
-    print(str_io.getvalue())
