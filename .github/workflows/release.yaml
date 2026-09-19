@@ -22,7 +22,7 @@ jobs:
       - name: Install all dependencies 📦
         run: devbox run install
       - name: Release Version 🏷
-        run: echo "RELEASE_VERSION=0.1.$(date +%s)" >> "$GITHUB_ENV"
+        run: echo "RELEASE_VERSION=1.0.$(date +%s)" >> "$GITHUB_ENV"
       - name: Create Tag
         uses: actions/github-script@v8
         with:
