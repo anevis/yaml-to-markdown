@@ -17,7 +17,7 @@
       "lint": "scripts/lint.sh",
       "publish": "scripts/publish.sh",
       "test": "scripts/test.sh",
-      "upgrade": "scripts/upgrade.sh"
+      "update": "scripts/update.sh"
     }
   }
 }

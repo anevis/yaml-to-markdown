@@ -194,4 +194,4 @@ class MDConverter:
     @staticmethod
     def _is_valid_uri(uri: str) -> bool:
         data_as_uri = urllib.parse.urlparse(uri)
-        return data_as_uri.scheme != "" and data_as_uri.netloc != ""  # noqa: PLC1901
+        return data_as_uri.scheme != "" and data_as_uri.netloc != ""  # ruff: ignore[compare-to-empty-string]
