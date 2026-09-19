@@ -21,7 +21,10 @@
         version =
           let
             content = builtins.readFile ./src/version.py;
-            match = builtins.match ".*__version__ = \"([^\"]+)\".*" content;
+            # build.sh rewrites version.py with single quotes; committed source uses double
+            double = builtins.match ".*__version__ = \"([^\"]+)\".*" content;
+            single = builtins.match ".*__version__ = '([^']+)'.*" content;
+            match = if double != null then double else single;
           in
           builtins.elemAt match 0;
 

@@ -17,7 +17,7 @@ devbox add github:anevis/yaml-to-markdown
 Pin a release tag:
 
 ```bash
-devbox add 'github:anevis/yaml-to-markdown/v0.1.1772518140'
+devbox add 'github:anevis/yaml-to-markdown/v1.0.1772518140'
 ```
 
 Or add the same flake ref to the `packages` list in `devbox.json`. After `devbox shell`, `yaml-to-markdown` is on your `PATH`.
