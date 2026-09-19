@@ -94,6 +94,16 @@ devbox run lint
 
 You can use `devbox run format-check` to check if the code is formatted correctly without making any changes.
 
+## Updating Dependencies
+
+To upgrade all Python dependencies to their latest compatible versions and refresh the lockfile, run:
+
+```bash
+devbox run update
+```
+
+This runs `uv sync --all-groups --upgrade` and updates both application and development dependency groups.
+
 ## Contributing
 
 We welcome contributions to this project. Please feel free to submit a pull request or open an issue on GitHub.
