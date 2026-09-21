@@ -12,6 +12,7 @@ class MDConverter:
     def __init__(self) -> None:
         """Converter to convert a JSON object into Markdown."""
         self._sections: list[str] | None = None
+        self._table_sections: dict[str, str] | None = None
         self._custom_processors: (
             dict[str, Callable[[MDConverter, str | None, Any, int], str]] | None
         ) = None
@@ -25,6 +26,30 @@ class MDConverter:
             sections (List[str]): A list of section titles.
         """
         self._sections = sections
+
+    def set_table_sections(self, sections: list[str]) -> None:
+        """Set sections whose dict children should render as table rows.
+
+        Each subsection key becomes the first table column (title-cased, matching
+        heading style). The column header is blank unless a title is given with
+        ``section->Title`` syntax.
+
+        Args:
+            sections (List[str]): Section specs, e.g. ``["people"]`` or
+                ``["team members->Member"]``.
+        """
+        parsed: dict[str, str] = {}
+        for spec in sections:
+            section_key, column_title = self._parse_table_section_spec(spec)
+            parsed[section_key] = column_title
+        self._table_sections = parsed
+
+    @staticmethod
+    def _parse_table_section_spec(spec: str) -> tuple[str, str]:
+        if "->" in spec:
+            section_key, column_title = spec.split("->", maxsplit=1)
+            return section_key.strip(), column_title.strip()
+        return spec.strip(), ""
 
     def set_custom_section_processors(
         self,
@@ -88,6 +113,18 @@ class MDConverter:
             section_str = self._custom_processors[section](self, section, data, level)
         elif isinstance(data, list):
             section_str = f"{head_str}{section_title}\n{self._process_list(data=data)}"
+        elif (
+            isinstance(data, dict)
+            and self._table_sections is not None
+            and section in self._table_sections
+        ):
+            section_str = f"{head_str}{section_title}\n"
+            key_column = self._table_sections[section]
+            rows = self._dict_to_table_rows(data, key_column=key_column)
+            if rows:
+                section_str += self._process_table(
+                    rows, literal_column_titles={key_column}
+                )
         elif isinstance(data, dict):
             section_str = f"{head_str}{section_title}\n"
             for sec in data:
@@ -97,6 +134,19 @@ class MDConverter:
                 section if section is not None else "", data, level
             )
         return f"{section_str}\n"
+
+    @staticmethod
+    def _dict_to_table_rows(
+        data: dict[str, Any], key_column: str = ""
+    ) -> list[dict[str, Any]]:
+        rows: list[dict[str, Any]] = []
+        for key, value in data.items():
+            row = dict(value) if isinstance(value, dict) else {"value": value}
+            rows.append({
+                key_column: convert_to_title_case(str(key)),
+                **{k: v for k, v in row.items() if k != key_column},
+            })
+        return rows
 
     def _process_list(self, data: list[Any]) -> str:
         if isinstance(data[0], dict):
@@ -108,9 +158,13 @@ class MDConverter:
             return list_str
         return "\n".join([f"* {item}" for item in data])
 
-    def _process_table(self, data: list[dict[str, str]]) -> str:
+    def _process_table(
+        self,
+        data: list[dict[str, Any]],
+        literal_column_titles: set[str] | None = None,
+    ) -> str:
         columns = self._get_columns(data)
-        table_str = self._process_columns(columns)
+        table_str = self._process_columns(columns, literal_column_titles)
         for row in data:
             cell_data = [self._get_str(col, row.get(col, ""), -1) for col in columns]
             row_data = " | ".join(cell_data)
@@ -118,8 +172,17 @@ class MDConverter:
         return table_str
 
     @staticmethod
-    def _process_columns(columns: list[str]) -> str:
-        column_titles = " | ".join([convert_to_title_case(col) for col in columns])
+    def _process_columns(
+        columns: list[str], literal_column_titles: set[str] | None = None
+    ) -> str:
+        literal = literal_column_titles or set()
+        titles: list[str] = []
+        for col in columns:
+            if col in literal:
+                titles.append(col)
+            else:
+                titles.append(convert_to_title_case(col))
+        column_titles = " | ".join(titles)
         col_sep = " | ".join(["---" for _ in columns])
         return f"| {column_titles} |\n| {col_sep} |"
 
@@ -135,6 +198,11 @@ class MDConverter:
     def _get_str(self, text: str, data: Any, level: int) -> str:
         str_data = str(data)
         prefix = "\n" if level > 0 else ""
+        if isinstance(data, dict):
+            return "<br/>".join([
+                f"{convert_to_title_case(str(key))}: {self._get_str(str(key), value, -1)}"
+                for key, value in data.items()
+            ])
         if isinstance(data, list):
             lst_str = "".join([f"<li>{item}</li>" for item in data])
             return f"<ul>{lst_str}</ul>"
