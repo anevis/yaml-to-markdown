@@ -205,7 +205,7 @@ Sydney
 ```
 
 #### Table Sections (Dict Children as Rows)
-Mark section keys so their nested dict children become table rows. The subsection key is the first column; its header is blank unless you set one with `section->Title`.
+Mark section keys so their nested dict children become table rows. The subsection key is the first column (title-cased, like headings); its header is blank unless you set one with `section->Title`.
 
 Section keys with spaces must be quoted in YAML and matched exactly when passed to `set_table_sections` or `-t`.
 
@@ -236,8 +236,8 @@ yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"
 ## Team Members
 |  | Role | Department |
 | --- | --- | --- |
-| alice | Developer | Engineering |
-| bob | Designer | Creative |
+| Alice | Developer | Engineering |
+| Bob | Designer | Creative |
 ```
 
 **Output Markdown** (`-t "team members->Member"`):
@@ -245,8 +245,8 @@ yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"
 ## Team Members
 | Member | Role | Department |
 | --- | --- | --- |
-| alice | Developer | Engineering |
-| bob | Designer | Creative |
+| Alice | Developer | Engineering |
+| Bob | Designer | Creative |
 ```
 
 #### Images and Links

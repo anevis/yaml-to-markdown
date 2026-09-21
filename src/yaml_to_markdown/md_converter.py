@@ -30,8 +30,9 @@ class MDConverter:
     def set_table_sections(self, sections: list[str]) -> None:
         """Set sections whose dict children should render as table rows.
 
-        Each subsection key becomes the first table column. The column header is
-        blank unless a title is given with ``section->Title`` syntax.
+        Each subsection key becomes the first table column (title-cased, matching
+        heading style). The column header is blank unless a title is given with
+        ``section->Title`` syntax.
 
         Args:
             sections (List[str]): Section specs, e.g. ``["people"]`` or
@@ -142,7 +143,7 @@ class MDConverter:
         for key, value in data.items():
             row = dict(value) if isinstance(value, dict) else {"value": value}
             rows.append({
-                key_column: key,
+                key_column: convert_to_title_case(str(key)),
                 **{k: v for k, v in row.items() if k != key_column},
             })
         return rows

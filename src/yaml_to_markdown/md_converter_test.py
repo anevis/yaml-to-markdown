@@ -407,8 +407,8 @@ def test_process_table_sections_dict_of_dicts() -> None:
         == """## People
 |  | Role | Department |
 | --- | --- | --- |
-| alice | Developer | Engineering |
-| bob | Designer | Creative |
+| Alice | Developer | Engineering |
+| Bob | Designer | Creative |
 """
     )
 
@@ -431,8 +431,8 @@ def test_process_table_sections_with_column_title() -> None:
         == """## Team Members
 | Member | Role | Department |
 | --- | --- | --- |
-| alice | Developer | Engineering |
-| bob | Designer | Creative |
+| Alice | Developer | Engineering |
+| Bob | Designer | Creative |
 """
     )
 
@@ -454,7 +454,7 @@ def test_process_table_sections_nested_name_preserved() -> None:
         == """## People
 |  | Name | Role |
 | --- | --- | --- |
-| alice | Alice Smith | Developer |
+| Alice | Alice Smith | Developer |
 """
     )
 
@@ -477,8 +477,8 @@ def test_process_table_sections_scalar_children() -> None:
         == """## People
 |  | Value |
 | --- | --- |
-| alice | Developer |
-| bob | Designer |
+| Alice | Developer |
+| Bob | Designer |
 """
     )
 
@@ -523,8 +523,8 @@ Tech Corp
 ### Departments
 |  | Headcount |
 | --- | --- |
-| engineering | 50 |
-| sales | 30 |
+| Engineering | 50 |
+| Sales | 30 |
 
 """
     )
@@ -579,7 +579,7 @@ def test_process_table_sections_cell_with_nested_object() -> None:
         == """## People
 |  | Role | Contact |
 | --- | --- | --- |
-| alice | Developer | Email: alice@example.com<br/>City: Sydney |
+| Alice | Developer | Email: alice@example.com<br/>City: Sydney |
 """
     )
 
@@ -601,6 +601,6 @@ def test_process_table_sections_spec_trims_whitespace() -> None:
         == """## People
 | Name | Role |
 | --- | --- |
-| alice | Developer |
+| Alice | Developer |
 """
     )
