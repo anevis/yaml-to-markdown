@@ -4,110 +4,112 @@
 
 ### Prerequisites
 
-- devbox
-- Python (3.12.2)
-- pip
+- [devbox](https://www.jetify.com/devbox)
+- Python >= 3.12 (devbox provides the pinned version)
+- [uv](https://docs.astral.sh/uv/) (provided by the Devbox environment)
 
-#### Setting up the Development Environment
-Install the devbox CLI tool if you haven't already. You can install it using the following command:
+### Setting up the Development Environment
+
+Install the Devbox CLI if you have not already:
 
 ```bash
 curl -fsSL https://get.jetpack.io/devbox | bash
-````
+```
 
 [![Built with Devbox](https://jetpack.io/img/devbox/shield_galaxy.svg)](https://jetpack.io/devbox/docs/contributor-quickstart/)
-### Setting up Development Environment
 
-#### Clone the repository:
+#### Clone the repository
 
 ```bash
-git clone git@github.com:anevis/json-to-markdown.git
-
-cd json-to-markdown-converter
+git clone git@github.com:anevis/yaml-to-markdown.git
+cd yaml-to-markdown
 ```
-#### Start the development environment:
+
+#### Start the development environment
 
 ```bash
 devbox shell
 ```
 
-#### Install the required packages:
+#### Install the required packages
 
-From within devbox shell
+From within a Devbox shell:
+
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
-From outside devbox shell
+From outside a Devbox shell:
+
 ```bash
 devbox run install
 ```
 
 ## Code Structure
 
-The functionality can be used in the command line or in Python code.
+The package lives under `src/yaml_to_markdown/`.
 
-To use the functionality in Python code, you can import the `MDConverter` class from the `yaml_to_markdown.md_converter` module.
-The `md_converter.py` file contains the `MDConverter` class, which is used by the `convert` function to perform the conversion.
+| Module | Role |
+|--------|------|
+| `md_converter.py` | `MDConverter` — converts a dict/list to Markdown |
+| `convert.py` | CLI entry point (`yaml-to-markdown`) and file I/O helpers |
+| `utils.py` | Shared helpers (e.g. title-case conversion) |
 
-To use the functionality from the command line, you can run the `convert.py` script in the `yaml_to_markdown` directory.
-This file contains the `convert` function, which takes a JSON or YAML file and converts it to Markdown.
+Python usage imports `MDConverter` from `yaml_to_markdown.md_converter`. The CLI is registered as `yaml-to-markdown` via the package entry point.
 
 ## Testing
-Tests for the project are located in the `*_test.py` files.
-These tests use the Pytest and Mock libraries to test the functionality of the `convert` function and the `MDConverter` class.
 
-### Running the Tests
+Tests are colocated as `*_test.py` modules under `src/yaml_to_markdown/` and use Pytest.
 
-You can run the tests with the following command:
+### Running the tests
 
-From within devbox shell
+From within a Devbox shell:
+
 ```bash
 pytest src/
 ```
 
-From outside devbox shell
+From outside a Devbox shell:
+
 ```bash
 devbox run test
 ```
-With Coverage, the coverage report will be generated in the `coverage.xml` file.
+
+`devbox run test` also writes a coverage report to `output/coverage.xml`.
+
+## Linting and Formatting
+
+The project uses [Ruff](https://docs.astral.sh/ruff/) for formatting and linting, and mypy for type checking.
+
+From within a Devbox shell:
+
 ```bash
-devbox run test-cov
+ruff format src/
+ruff check src/
+mypy --config-file=pyproject.toml src/
 ```
 
-## Linting & Formatting
+From outside a Devbox shell:
 
-The project uses the Black and Flake8 libraries for code formatting and linting.
-You can run the following commands to format and lint the code:
-
-From within devbox shell
-```bash
-black src/
-flake8 src/
-```
-
-From outside devbox shell
 ```bash
 devbox run format
 devbox run lint
 ```
 
-You can use `devbox run format-check` to check if the code is formatted correctly without making any changes.
-
 ## Updating Dependencies
 
-To upgrade all Python dependencies to their latest compatible versions and refresh the lockfile, run:
+To upgrade Python dependencies and refresh the lockfile:
 
 ```bash
 devbox run update
 ```
 
-This runs `uv sync --all-groups --upgrade` and updates both application and development dependency groups.
+This runs `uv sync --all-groups --upgrade`.
 
 ## Contributing
 
-We welcome contributions to this project. Please feel free to submit a pull request or open an issue on GitHub.
+Contributions are welcome. Please open a pull request or an issue on GitHub.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](../LICENSE) file for details.

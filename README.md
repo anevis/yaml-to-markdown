@@ -33,18 +33,20 @@ devbox add path:./path/to/yaml-to-markdown
 ```bash
 $ yaml-to-markdown --help
 Convert JSON or YAML to Markdown.
-Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>]
+Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>] [-t <table_sections>]
     -o, --output-file <output_file>: Path to the output file as a string [Mandatory].
     -y, --yaml-file <yaml_file>: Path to the YAML file as a string [Optional]
     -j, --json-file <json_file>: Path to the JSON file as a string [Optional]
+    -t, --table-sections <table_sections>: Comma-separated section specs whose dict children render as table rows. Use section->Title to set the key-column header (blank by default) [Optional]
     -h, --help: Show this message and exit.
 Note: Either yaml_file or json_file is required along with output_file.
 Example: yaml-to-markdown -o output.md -y data.yaml
+Example: yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"
 ```
 
 ### In Python Code example:
 
-#### Convert a Pyton dictionary to Markdown:
+#### Convert a Python dictionary to Markdown:
 ```python
 from yaml_to_markdown.md_converter import MDConverter
 
@@ -69,6 +71,26 @@ Sydney
 ## Hobbies
 * reading
 * swimming
+```
+
+#### Select sections and custom processors
+
+Include only specific top-level keys (and control their order):
+
+```python
+converter = MDConverter()
+converter.set_selected_sections(["city", "name"])
+```
+
+Override rendering for a section key with a custom callback
+`(converter, section, data, level) -> str`:
+
+```python
+def render_hobbies(converter, section, data, level):
+    return f"{'#' * level} Hobbies\n" + "\n".join(f"- {item}" for item in data)
+
+converter = MDConverter()
+converter.set_custom_section_processors({"hobbies": render_hobbies})
 ```
 
 ### From the Command Line
@@ -140,6 +162,24 @@ employees:
 | Bob | Designer | Creative |
 ```
 
+Nested objects inside a table cell are shown as `Key: value` pairs, each on a new line (`<br/>`):
+
+**Input YAML:**
+```yaml
+employees:
+  - name: Alice
+    contact:
+      email: alice@example.com
+      phone: "123"
+```
+**Output Markdown:**
+```markdown
+## Employees
+| Name | Contact |
+| --- | --- |
+| Alice | Email: alice@example.com<br/>Phone: 123 |
+```
+
 #### Nested Structures
 **Input YAML:**
 ```yaml
@@ -162,6 +202,51 @@ Sydney
 50
 #### Sales
 30
+```
+
+#### Table Sections (Dict Children as Rows)
+Mark section keys so their nested dict children become table rows. The subsection key is the first column (title-cased, like headings); its header is blank unless you set one with `section->Title`.
+
+Section keys with spaces must be quoted in YAML and matched exactly when passed to `set_table_sections` or `-t`.
+
+**Input YAML:**
+```yaml
+"team members":
+  alice:
+    role: Developer
+    department: Engineering
+  bob:
+    role: Designer
+    department: Creative
+```
+
+**Python (blank key-column header):**
+```python
+converter = MDConverter()
+converter.set_table_sections(["team members"])
+```
+
+**CLI (with key-column header):**
+```bash
+yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"
+```
+
+**Output Markdown** (`-t "team members"`):
+```markdown
+## Team Members
+|  | Role | Department |
+| --- | --- | --- |
+| Alice | Developer | Engineering |
+| Bob | Designer | Creative |
+```
+
+**Output Markdown** (`-t "team members->Member"`):
+```markdown
+## Team Members
+| Member | Role | Department |
+| --- | --- | --- |
+| Alice | Developer | Engineering |
+| Bob | Designer | Creative |
 ```
 
 #### Images and Links
