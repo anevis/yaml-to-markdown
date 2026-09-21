@@ -50,7 +50,9 @@ def _help() -> None:
 def _parse_table_sections(table_sections: str | None) -> list[str] | None:
     if table_sections is None:
         return None
-    sections = [section.strip() for section in table_sections.split(",") if section.strip()]
+    sections = [
+        section.strip() for section in table_sections.split(",") if section.strip()
+    ]
     return sections or None
 
 

@@ -142,6 +142,24 @@ employees:
 | Bob | Designer | Creative |
 ```
 
+Nested objects inside a table cell are shown as `Key: value` pairs, each on a new line (`<br/>`):
+
+**Input YAML:**
+```yaml
+employees:
+  - name: Alice
+    contact:
+      email: alice@example.com
+      phone: "123"
+```
+**Output Markdown:**
+```markdown
+## Employees
+| Name | Contact |
+| --- | --- |
+| Alice | Email: alice@example.com<br/>Phone: 123 |
+```
+
 #### Nested Structures
 **Input YAML:**
 ```yaml

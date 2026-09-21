@@ -141,9 +141,10 @@ class MDConverter:
         rows: list[dict[str, Any]] = []
         for key, value in data.items():
             row = dict(value) if isinstance(value, dict) else {"value": value}
-            rows.append(
-                {key_column: key, **{k: v for k, v in row.items() if k != key_column}}
-            )
+            rows.append({
+                key_column: key,
+                **{k: v for k, v in row.items() if k != key_column},
+            })
         return rows
 
     def _process_list(self, data: list[Any]) -> str:
@@ -196,6 +197,11 @@ class MDConverter:
     def _get_str(self, text: str, data: Any, level: int) -> str:
         str_data = str(data)
         prefix = "\n" if level > 0 else ""
+        if isinstance(data, dict):
+            return "<br/>".join([
+                f"{convert_to_title_case(str(key))}: {self._get_str(str(key), value, -1)}"
+                for key, value in data.items()
+            ])
         if isinstance(data, list):
             lst_str = "".join([f"<li>{item}</li>" for item in data])
             return f"<ul>{lst_str}</ul>"
