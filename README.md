@@ -46,7 +46,7 @@ Example: yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"
 
 ### In Python Code example:
 
-#### Convert a Pyton dictionary to Markdown:
+#### Convert a Python dictionary to Markdown:
 ```python
 from yaml_to_markdown.md_converter import MDConverter
 
@@ -71,6 +71,26 @@ Sydney
 ## Hobbies
 * reading
 * swimming
+```
+
+#### Select sections and custom processors
+
+Include only specific top-level keys (and control their order):
+
+```python
+converter = MDConverter()
+converter.set_selected_sections(["city", "name"])
+```
+
+Override rendering for a section key with a custom callback
+`(converter, section, data, level) -> str`:
+
+```python
+def render_hobbies(converter, section, data, level):
+    return f"{'#' * level} Hobbies\n" + "\n".join(f"- {item}" for item in data)
+
+converter = MDConverter()
+converter.set_custom_section_processors({"hobbies": render_hobbies})
 ```
 
 ### From the Command Line
