@@ -377,3 +377,150 @@ value2
         mock_function.assert_called_once_with(
             md_converter, section_name, section_value, 2
         )
+
+    def test_process_table_sections_dict_of_dicts(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        md_converter.set_table_sections(["people"])
+        data: dict[str, Any] = {
+            "people": {
+                "alice": {"role": "Developer", "department": "Engineering"},
+                "bob": {"role": "Designer", "department": "Creative"},
+            }
+        }
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """## People
+|  | Role | Department |
+| --- | --- | --- |
+| alice | Developer | Engineering |
+| bob | Designer | Creative |
+"""
+        )
+
+    def test_process_table_sections_with_column_title(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        md_converter.set_table_sections(["team members->Member"])
+        data: dict[str, Any] = {
+            "team members": {
+                "alice": {"role": "Developer", "department": "Engineering"},
+                "bob": {"role": "Designer", "department": "Creative"},
+            }
+        }
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """## Team Members
+| Member | Role | Department |
+| --- | --- | --- |
+| alice | Developer | Engineering |
+| bob | Designer | Creative |
+"""
+        )
+
+    def test_process_table_sections_nested_name_preserved(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        md_converter.set_table_sections(["people"])
+        data: dict[str, Any] = {
+            "people": {
+                "alice": {"name": "Alice Smith", "role": "Developer"},
+            }
+        }
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """## People
+|  | Name | Role |
+| --- | --- | --- |
+| alice | Alice Smith | Developer |
+"""
+        )
+
+    def test_process_table_sections_scalar_children(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        md_converter.set_table_sections(["people"])
+        data: dict[str, Any] = {
+            "people": {
+                "alice": "Developer",
+                "bob": "Designer",
+            }
+        }
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """## People
+|  | Value |
+| --- | --- |
+| alice | Developer |
+| bob | Designer |
+"""
+        )
+
+    def test_process_table_sections_empty_dict(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        md_converter.set_table_sections(["people"])
+        data: dict[str, Any] = {"people": {}}
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """## People
+
+"""
+        )
+
+    def test_process_table_sections_nested_match(self) -> None:
+        output_writer = StringIO()
+        md_converter = MDConverter()
+        md_converter.set_table_sections(["departments"])
+        data: dict[str, Any] = {
+            "company": {
+                "name": "Tech Corp",
+                "departments": {
+                    "engineering": {"headcount": 50},
+                    "sales": {"headcount": 30},
+                },
+            }
+        }
+        md_converter.convert(data, output_writer)
+        output = output_writer.getvalue()
+
+        assert (
+            output
+            == """## Company
+### Name
+Tech Corp
+### Departments
+|  | Headcount |
+| --- | --- |
+| engineering | 50 |
+| sales | 30 |
+
+"""
+        )
+
+    def test_parse_table_section_spec(self) -> None:
+        assert MDConverter._parse_table_section_spec("people") == ("people", "")
+        assert MDConverter._parse_table_section_spec("people->Name") == (
+            "people",
+            "Name",
+        )
+        assert MDConverter._parse_table_section_spec("team members->Member") == (
+            "team members",
+            "Member",
+        )
+        assert MDConverter._parse_table_section_spec(" a -> b ") == ("a", "b")

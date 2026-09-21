@@ -33,13 +33,15 @@ devbox add path:./path/to/yaml-to-markdown
 ```bash
 $ yaml-to-markdown --help
 Convert JSON or YAML to Markdown.
-Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>]
+Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>] [-t <table_sections>]
     -o, --output-file <output_file>: Path to the output file as a string [Mandatory].
     -y, --yaml-file <yaml_file>: Path to the YAML file as a string [Optional]
     -j, --json-file <json_file>: Path to the JSON file as a string [Optional]
+    -t, --table-sections <table_sections>: Comma-separated section specs whose dict children render as table rows. Use section->Title to set the key-column header (blank by default) [Optional]
     -h, --help: Show this message and exit.
 Note: Either yaml_file or json_file is required along with output_file.
 Example: yaml-to-markdown -o output.md -y data.yaml
+Example: yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"
 ```
 
 ### In Python Code example:
@@ -162,6 +164,51 @@ Sydney
 50
 #### Sales
 30
+```
+
+#### Table Sections (Dict Children as Rows)
+Mark section keys so their nested dict children become table rows. The subsection key is the first column; its header is blank unless you set one with `section->Title`.
+
+Section keys with spaces must be quoted in YAML and matched exactly when passed to `set_table_sections` or `-t`.
+
+**Input YAML:**
+```yaml
+"team members":
+  alice:
+    role: Developer
+    department: Engineering
+  bob:
+    role: Designer
+    department: Creative
+```
+
+**Python (blank key-column header):**
+```python
+converter = MDConverter()
+converter.set_table_sections(["team members"])
+```
+
+**CLI (with key-column header):**
+```bash
+yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"
+```
+
+**Output Markdown** (`-t "team members"`):
+```markdown
+## Team Members
+|  | Role | Department |
+| --- | --- | --- |
+| alice | Developer | Engineering |
+| bob | Designer | Creative |
+```
+
+**Output Markdown** (`-t "team members->Member"`):
+```markdown
+## Team Members
+| Member | Role | Department |
+| --- | --- | --- |
+| alice | Developer | Engineering |
+| bob | Designer | Creative |
 ```
 
 #### Images and Links

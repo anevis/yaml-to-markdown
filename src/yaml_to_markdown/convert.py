@@ -22,7 +22,8 @@ def _get_yaml_data(yaml_file: str) -> dict[str, Any]:
 def _help() -> None:
     click.echo("Convert JSON or YAML to Markdown.")
     click.echo(
-        "Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>]"
+        "Usage: yaml-to-markdown -o <output_file> [-y <yaml_file> | -j <json_file>] "
+        "[-t <table_sections>]"
     )
     click.echo(
         "    -o, --output-file <output_file>: Path to the output file as a string [Mandatory]."
@@ -33,20 +34,37 @@ def _help() -> None:
     click.echo(
         "    -j, --json-file <json_file>: Path to the JSON file as a string [Optional]"
     )
+    click.echo(
+        "    -t, --table-sections <table_sections>: Comma-separated section specs whose "
+        "dict children render as table rows. Use section->Title to set the key-column "
+        "header (blank by default) [Optional]"
+    )
     click.echo("    -h, --help: Show this message and exit.")
     click.echo("Note: Either yaml_file or json_file is required along with output_file.")
     click.echo("Example: yaml-to-markdown -o output.md -y data.yaml")
+    click.echo(
+        'Example: yaml-to-markdown -o output.md -y data.yaml -t "team members->Member"'
+    )
+
+
+def _parse_table_sections(table_sections: str | None) -> list[str] | None:
+    if table_sections is None:
+        return None
+    sections = [section.strip() for section in table_sections.split(",") if section.strip()]
+    return sections or None
 
 
 @click.command()
 @click.option("-o", "--output-file", "output_file", type=str)
 @click.option("-y", "--yaml-file", "yaml_file", type=str, default=None)
 @click.option("-j", "--json-file", "json_file", type=str, default=None)
+@click.option("-t", "--table-sections", "table_sections", type=str, default=None)
 @click.option("-h", "--help", "show_help", default=False, is_flag=True)
 def main(
     output_file: str,
     yaml_file: str | None,
     json_file: str | None,
+    table_sections: str | None,
     show_help: bool,
 ) -> None:
     if show_help:
@@ -54,7 +72,12 @@ def main(
         return
     _verify_inputs(output_file=output_file, yaml_file=yaml_file, json_file=json_file)
 
-    convert(output_file=output_file, yaml_file=yaml_file, json_file=json_file)
+    convert(
+        output_file=output_file,
+        yaml_file=yaml_file,
+        json_file=json_file,
+        table_sections=_parse_table_sections(table_sections),
+    )
 
 
 def _verify_inputs(
@@ -76,13 +99,19 @@ def _get_data(yaml_file: str | None, json_file: str | None) -> dict[str, Any]:
 
 
 def convert(
-    output_file: str, yaml_file: str | None = None, json_file: str | None = None
+    output_file: str,
+    yaml_file: str | None = None,
+    json_file: str | None = None,
+    table_sections: list[str] | None = None,
 ) -> None:
     _verify_inputs(output_file=output_file, yaml_file=yaml_file, json_file=json_file)
 
     data = _get_data(yaml_file=yaml_file, json_file=json_file)
+    md_converter = MDConverter()
+    if table_sections is not None:
+        md_converter.set_table_sections(table_sections)
     with Path(output_file).open("w", encoding="utf-8") as md_file:
-        MDConverter().convert(data=data, output_writer=md_file)
+        md_converter.convert(data=data, output_writer=md_file)
 
 
 if __name__ == "__main__":
