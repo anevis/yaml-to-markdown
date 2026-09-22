@@ -45,10 +45,11 @@
 
           build-system = with python3Packages; [ hatchling ];
 
-          # pyproject pins hatchling==1.32.0; nixpkgs may ship a nearby version
+          # pyproject pins an exact hatchling version (bumped by dependabot);
+          # nixpkgs ships a nearby version, so drop the pin. Match any version so
+          # the build survives future bumps without editing this file.
           postPatch = ''
-            substituteInPlace pyproject.toml \
-              --replace-fail 'hatchling==1.32.0' 'hatchling'
+            sed -i -E "s/hatchling==[0-9]+(\.[0-9]+)*/hatchling/" pyproject.toml
           '';
 
           dependencies = with python3Packages; [
